@@ -31,6 +31,9 @@ const AuthPage = () => {
                     <GraduationCap className="w-8 h-8 mr-4" />
                     <span className="text-xl font-extrabold">LMS Academy</span>
                 </Link>
+
+                <Link to="/test" className="text-2xl ml-auto mr-10 font-bold"> Test</Link>
+
             </header>
 
             <div className="flex items-center justify-center h-[calc(100vh-100px)] ">

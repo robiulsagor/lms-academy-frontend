@@ -1,6 +1,7 @@
+import { Skeleton } from '@/components/ui/skeleton'
 import { initialSigninData, initialSignupData } from '@/config'
 import axiosInstance from '@/utils/axios'
-import { createContext, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
 export const AuthContext = createContext(null)
@@ -9,15 +10,32 @@ export const AuthContext = createContext(null)
 const AuthProvider = ({ children }) => {
     const [signinFormData, setSigninFormData] = useState(initialSigninData)
     const [signupFormData, setSignupFormData] = useState(initialSignupData)
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
+    const [auth, setAuth] = useState({
+        authenticated: false,
+        user: null
+    })
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault()
         try {
-            console.log("Sign In");
+            setLoading(true)
+            try {
+                const res = await axiosInstance.post('http://localhost:5000/api/auth/login', signinFormData, { withCredentials: true })
+                console.log(res.data);
+                if (res.data.success) {
+                    toast.success(res.data.message)
+                } else {
+                    toast.error(res.data.message)
+                }
+            } catch (error) {
+                console.log(error);
+                toast.error("Something went wrong")
+            } finally {
+                setLoading(false)
+            }
         } catch (error) {
             console.log(error);
-
         }
     }
 
@@ -43,9 +61,45 @@ const AuthProvider = ({ children }) => {
 
     }
 
-    const value = { signinFormData, setSigninFormData, signupFormData, setSignupFormData, handleLogin, handleRegister, loading }
+    const checkAuth = async () => {
+        setLoading(true)
+        try {
+            const res = await axiosInstance.get("/api/auth/check-auth", { withCredentials: true })
+            if (res.data.success) {
+                setAuth({
+                    authenticated: true,
+                    user: res.data.data.user
+                })
+                setLoading(false)
+            } else {
+                setAuth({
+                    authenticated: false,
+                    user: null
+                })
+                setLoading(false)
+            }
+        } catch (error) {
+            console.log(error?.response?.data?.message || error?.message);
+            // console.log(error.message);
+            setLoading(false)
+            setAuth({
+                authenticated: false,
+                user: null
+            })
+            console.log(auth);
 
-    return <AuthContext.Provider value={value}>{children} </AuthContext.Provider>
+        }
+    }
+
+    useEffect(() => {
+        checkAuth()
+    }, [])
+
+
+
+    const value = { signinFormData, setSigninFormData, signupFormData, setSignupFormData, handleLogin, handleRegister, loading, auth }
+
+    return <AuthContext.Provider value={value}>{loading ? <Skeleton /> : children} </AuthContext.Provider>
 }
 
 export default AuthProvider
