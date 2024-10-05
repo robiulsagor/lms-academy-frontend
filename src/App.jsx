@@ -9,6 +9,7 @@ import { AuthContext } from "./context/auth-context";
 import InstructorDashboardPage from "./pages/instructor";
 import CommonLayout from "./components/student-view/common-layout";
 import StudentHomepage from "./pages/student/home";
+import NotFound from "./pages/not-found";
 
 function App() {
   const { auth } = useContext(AuthContext)
@@ -43,11 +44,12 @@ function App() {
               user={auth?.user}
             />
           }>
-          <Route path="" element={<StudentHomepage />} />
+          <Route path="/" element={<StudentHomepage />} />
           <Route path="home" element={<StudentHomepage />} />
         </Route>
 
         <Route path="/test" element={<Test />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <ToastContainer autoClose={2000} position="bottom-right" />
     </>

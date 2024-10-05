@@ -7,14 +7,11 @@ const RouteGuard = ({ authenticated, user, element }) => {
     const location = useLocation()
 
     if (!authenticated && !location.pathname.includes('/auth')) {
-        console.log("a");
-
         return <Navigate to="/auth" replace={true} />
     }
 
     if (authenticated && user?.role !== 'instructor' &&
         (location.pathname.includes('/instructor') || location.pathname.includes('/auth'))) {
-        console.log("b");
         return <Navigate to={'/home'} />
     }
 

@@ -11,6 +11,7 @@ const AuthProvider = ({ children }) => {
     const [signinFormData, setSigninFormData] = useState(initialSigninData)
     const [signupFormData, setSignupFormData] = useState(initialSignupData)
     const [loading, setLoading] = useState(true)
+    const [pageLoading, setPageLoading] = useState(true)
     const [auth, setAuth] = useState({
         authenticated: false,
         user: null
@@ -21,12 +22,15 @@ const AuthProvider = ({ children }) => {
         try {
             setLoading(true)
             try {
-                const res = await axiosInstance.post('http://localhost:5000/api/auth/login', signinFormData, { withCredentials: true })
-                console.log(res.data);
-                if (res.data.success) {
-                    toast.success(res.data.message)
+                const { data } = await axiosInstance.post('http://localhost:5000/api/auth/login', signinFormData, { withCredentials: true })
+                if (data.success) {
+                    toast.success(data.message)
+                    setAuth({
+                        authenticated: true,
+                        user: data.data.user
+                    })
                 } else {
-                    toast.error(res.data.message)
+                    toast.error(data.message)
                 }
             } catch (error) {
                 console.log(error);
@@ -62,7 +66,7 @@ const AuthProvider = ({ children }) => {
     }
 
     const checkAuth = async () => {
-        setLoading(true)
+        setPageLoading(true)
         try {
             const res = await axiosInstance.get("/api/auth/check-auth", { withCredentials: true })
             if (res.data.success) {
@@ -70,24 +74,22 @@ const AuthProvider = ({ children }) => {
                     authenticated: true,
                     user: res.data.data.user
                 })
-                setLoading(false)
+                setPageLoading(false)
             } else {
                 setAuth({
                     authenticated: false,
                     user: null
                 })
-                setLoading(false)
+                setPageLoading(false)
+
             }
         } catch (error) {
             console.log(error?.response?.data?.message || error?.message);
-            // console.log(error.message);
-            setLoading(false)
+            setPageLoading(false)
             setAuth({
                 authenticated: false,
                 user: null
             })
-            console.log(auth);
-
         }
     }
 
@@ -99,7 +101,7 @@ const AuthProvider = ({ children }) => {
 
     const value = { signinFormData, setSigninFormData, signupFormData, setSignupFormData, handleLogin, handleRegister, loading, auth }
 
-    return <AuthContext.Provider value={value}>{loading ? <Skeleton /> : children} </AuthContext.Provider>
+    return <AuthContext.Provider value={value}>{pageLoading ? <Skeleton /> : children} </AuthContext.Provider>
 }
 
 export default AuthProvider
