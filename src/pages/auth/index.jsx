@@ -9,7 +9,7 @@ import { Link } from "react-router-dom"
 
 const AuthPage = () => {
     const { signinFormData, setSigninFormData, signupFormData, setSignupFormData, handleLogin, handleRegister } = useContext(AuthContext)
-    // eslint-disable-next-line no-unused-vars
+
     const [activeTab, setActiveTab] = useState('signin')
 
     const handleTabChange = (value) => {
@@ -37,7 +37,7 @@ const AuthPage = () => {
             </header>
 
             <div className="flex items-center justify-center h-[calc(100vh-100px)] ">
-                <Tabs defaultValue="signin" onValueChange={handleTabChange} className="w-[400px]">
+                <Tabs defaultValue={activeTab} onValueChange={handleTabChange} className="w-[400px]">
                     <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="signin">Sign In</TabsTrigger>
                         <TabsTrigger value="signup" >Sign Up</TabsTrigger>

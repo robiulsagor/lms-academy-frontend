@@ -10,7 +10,7 @@ export const AuthContext = createContext(null)
 const AuthProvider = ({ children }) => {
     const [signinFormData, setSigninFormData] = useState(initialSigninData)
     const [signupFormData, setSignupFormData] = useState(initialSignupData)
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
     const [pageLoading, setPageLoading] = useState(true)
     const [auth, setAuth] = useState({
         authenticated: false,
@@ -25,6 +25,7 @@ const AuthProvider = ({ children }) => {
                 const { data } = await axiosInstance.post('http://localhost:5000/api/auth/login', signinFormData, { withCredentials: true })
                 if (data.success) {
                     toast.success(data.message)
+                    setSigninFormData(initialSigninData)
                     setAuth({
                         authenticated: true,
                         user: data.data.user
@@ -53,6 +54,7 @@ const AuthProvider = ({ children }) => {
             console.log(res);
             if (res.data.success) {
                 toast.success(res.data.message)
+                setSignupFormData(initialSignupData)
             } else {
                 toast.error(res.data.message)
             }
@@ -99,7 +101,7 @@ const AuthProvider = ({ children }) => {
 
 
 
-    const value = { signinFormData, setSigninFormData, signupFormData, setSignupFormData, handleLogin, handleRegister, loading, auth }
+    const value = { signinFormData, setSigninFormData, signupFormData, setSignupFormData, handleLogin, handleRegister, loading, auth, setAuth }
 
     return <AuthContext.Provider value={value}>{pageLoading ? <Skeleton /> : children} </AuthContext.Provider>
 }

@@ -3,6 +3,7 @@
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
+import { Textarea } from "../ui/textarea";
 
 // eslint-disable-next-line react/prop-types
 const FormControls = ({ formControls = [], formData, setFormData }) => {
@@ -24,13 +25,17 @@ const FormControls = ({ formControls = [], formData, setFormData }) => {
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
-                            <SelectLabel>Fruits</SelectLabel>
+                            {/* <SelectLabel>Fruits</SelectLabel> */}
                             {getControlItem?.options.length > 0 && getControlItem.options.map(item => (
-                                <SelectItem key={item} value={item}>{item}</SelectItem>
+                                <SelectItem key={item.id} value={item.id}>{item.label}</SelectItem>
                             ))}
                         </SelectGroup>
                     </SelectContent>
                 </Select>
+                break;
+
+            case 'textarea':
+                element = <Textarea type={getControlItem.type} name={getControlItem.name} id={getControlItem.name} value={value} onChange={e => setFormData({ ...formData, [getControlItem.name]: e.target.value })} placeholder={getControlItem.placeholder}></Textarea>
                 break;
 
             default:
