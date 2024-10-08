@@ -1,3 +1,4 @@
+import MediaProgressBar from "@/components/media-progress-bar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -11,7 +12,7 @@ import { useContext } from "react"
 
 const CourseCurriculam = () => {
 
-    const { courseCurriculamFormData, setCourseCurriculamFormData, mediaUploadProgress, setMediaUploadProgress } = useContext(InstructorContext)
+    const { courseCurriculamFormData, setCourseCurriculamFormData, mediaUploadProgress, setMediaUploadProgress, mediaUploadProgressPercentage, setMediaUploadProgressPercentage } = useContext(InstructorContext)
 
     const handleAddLecture = () => {
         setCourseCurriculamFormData([
@@ -52,9 +53,9 @@ const CourseCurriculam = () => {
 
             try {
                 setMediaUploadProgress(true)
-                const res = await uploadMedia(videoFormData)
+                const res = await uploadMedia(videoFormData, setMediaUploadProgressPercentage)
                 if (res.success) {
-                    setMediaUploadProgress(false)
+
                     let cpyCourseCurriculamFormData = [...courseCurriculamFormData]
                     cpyCourseCurriculamFormData[index] = {
                         ...cpyCourseCurriculamFormData[index],
@@ -62,6 +63,7 @@ const CourseCurriculam = () => {
                         public_id: res.result.public_id
                     }
                     setCourseCurriculamFormData(cpyCourseCurriculamFormData)
+                    setMediaUploadProgress(false)
                 }
             } catch (error) {
                 console.log(error);
@@ -69,7 +71,6 @@ const CourseCurriculam = () => {
         }
     }
 
-    console.log(courseCurriculamFormData);
 
 
     return (
@@ -79,6 +80,11 @@ const CourseCurriculam = () => {
             </CardHeader>
             <CardContent>
                 <Button onClick={handleAddLecture}>Add Lecture</Button>
+
+                {
+                    mediaUploadProgress &&
+                    <MediaProgressBar isUploading={mediaUploadProgress} progress={mediaUploadProgressPercentage} />
+                }
 
                 <div className="space-y-3 mt-5">
                     {courseCurriculamFormData.map((curriculam, index) => (

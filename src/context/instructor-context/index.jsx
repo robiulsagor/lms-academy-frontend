@@ -8,8 +8,9 @@ const InstructorProvider = ({ children }) => {
     const [courseLandingFormData, setCourseLandingFormData] = useState(courseLandingInitialFormData)
     const [courseCurriculamFormData, setCourseCurriculamFormData] = useState(courseCurriculamInitialFormData)
     const [mediaUploadProgress, setMediaUploadProgress] = useState(false)
+    const [mediaUploadProgressPercentage, setMediaUploadProgressPercentage] = useState(0)
 
-    return <InstructorContext.Provider value={{ courseLandingFormData, setCourseLandingFormData, courseCurriculamFormData, setCourseCurriculamFormData, mediaUploadProgress, setMediaUploadProgress }}>{children} </InstructorContext.Provider>
+    return <InstructorContext.Provider value={{ courseLandingFormData, setCourseLandingFormData, courseCurriculamFormData, setCourseCurriculamFormData, mediaUploadProgress, setMediaUploadProgress, mediaUploadProgressPercentage, setMediaUploadProgressPercentage }}>{children} </InstructorContext.Provider>
 }
 
 export default InstructorProvider
