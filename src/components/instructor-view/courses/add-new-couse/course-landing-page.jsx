@@ -6,6 +6,8 @@ import { useContext } from "react"
 
 const CourseLandingPage = () => {
     const { courseLandingFormData, setCourseLandingFormData } = useContext(InstructorContext)
+    console.log(courseLandingFormData);
+
     return <div>
         <Card>
             <CardHeader className="text-xl font-bold">

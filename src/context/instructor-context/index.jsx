@@ -7,8 +7,9 @@ export const InstructorContext = createContext(null)
 const InstructorProvider = ({ children }) => {
     const [courseLandingFormData, setCourseLandingFormData] = useState(courseLandingInitialFormData)
     const [courseCurriculamFormData, setCourseCurriculamFormData] = useState(courseCurriculamInitialFormData)
+    const [mediaUploadProgress, setMediaUploadProgress] = useState(false)
 
-    return <InstructorContext.Provider value={{ courseLandingFormData, setCourseLandingFormData, courseCurriculamFormData, setCourseCurriculamFormData }}>{children} </InstructorContext.Provider>
+    return <InstructorContext.Provider value={{ courseLandingFormData, setCourseLandingFormData, courseCurriculamFormData, setCourseCurriculamFormData, mediaUploadProgress, setMediaUploadProgress }}>{children} </InstructorContext.Provider>
 }
 
 export default InstructorProvider
