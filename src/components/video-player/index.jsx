@@ -74,6 +74,50 @@ const VideoPlayer = ({ width = '640px', height = "390px", videoUrl }) => {
         }
     }, [isFullScreen])
 
+    const handleKeyDown = (e) => {
+        if (!playerFocus) {
+            console.log("not focus");
+            return
+        }
+
+        switch (e.key) {
+            case ' ':
+                handlePlayAndPause()
+                break;
+
+            case 'ArrowUp':
+                if (volume < 1) {
+                    setVolume(prev => prev + 0.1)
+                }
+                break;
+
+            case 'ArrowDown':
+                if (volume > 0) {
+                    setVolume(prev => prev - 0.1)
+                }
+
+                break;
+            case 'ArrowLeft':
+                handleRewind()
+                break;
+
+            case 'ArrowRight':
+                handleForward()
+                break;
+
+            case 'm':
+                setMuted(prev => !prev)
+                break;
+
+            case 'f':
+                handleFullScreen()
+                break;
+
+            default:
+                break;
+        }
+    }
+
     const pad = (time) => {
         return ("0" + time).slice(-2)
     }
@@ -126,16 +170,23 @@ const VideoPlayer = ({ width = '640px', height = "390px", videoUrl }) => {
         }
     }, [showControls])
 
+    useEffect(() => {
+        window.addEventListener("keydown", handleKeyDown)
+        return () => window.removeEventListener("keydown", handleKeyDown)
+    }, [playerFocus])
+
+
     return (
         <div
+            tabIndex={0}
             ref={playerContainerRef}
             className={`relative bg-gray-900 rounded-lg shadow-2xl overflow-hidden object-contain transition duration-300 select-none  ${isFullScreen ? "w-screen h-screen" : ""} ${!showControls ? 'cursor-none' : ''}`}
             style={{ width, height }}
-            onMouseMove={() => setShowControls(true)
-            }
+            onMouseMove={() => setShowControls(true)}
             onMouseLeave={() => setShowControls(false)}
+            onFocus={() => setPlayerFocus(true)}
+            onBlur={() => setPlayerFocus(false)}
         >
-
             <ReactPlayer
                 ref={playerRef}
                 className="absolute top-0 left-0"
@@ -147,11 +198,7 @@ const VideoPlayer = ({ width = '640px', height = "390px", videoUrl }) => {
                 muted={muted}
                 onProgress={handleProgress}
                 onEnded={handlePlayAndPause}
-                onClick={() => {
-                    handlePlayAndPause()
-                    console.log("onclick");
-                }
-                }
+                onClick={handlePlayAndPause}
             />
 
             {/* to show a play or pause icon  on top of the video like youtube*/}
