@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import ReactPlayer from "react-player"
 import { Slider } from "../ui/slider"
 import { Button } from "../ui/button"
-import { LucideVolume1, LucideVolume2, LucideVolumeX, Maximize, Minimize, Pause, Play, RotateCcwIcon, RotateCwIcon, Volume, Volume1, Volume2, VolumeOff } from "lucide-react"
+import { ArrowLeftCircle, LucideVolume1, LucideVolume2, LucideVolumeX, Maximize, Minimize, Pause, Play, RotateCcwIcon, RotateCwIcon, Volume, Volume1, Volume1Icon, Volume2, Volume2Icon, VolumeOff, VolumeX } from "lucide-react"
 import { AnimatePresence, motion } from "framer-motion"
 
 const VideoPlayer = ({ width = '640px', height = "390px", videoUrl }) => {
@@ -25,7 +25,11 @@ const VideoPlayer = ({ width = '640px', height = "390px", videoUrl }) => {
     const playerContainerRef = useRef(null)
 
     const handlePlayAndPause = () => {
-        setPlaying(prev => !prev)
+        setPlaying(prev => {
+            const newState = !prev;
+            setCurrentIconState(newState ? <Pause /> : <Play />);
+            return newState;
+        });
     }
 
     const handleProgress = (state) => {
@@ -46,10 +50,12 @@ const VideoPlayer = ({ width = '640px', height = "390px", videoUrl }) => {
 
     const handleRewind = () => {
         playerRef.current?.seekTo(playerRef.current.getCurrentTime() - 5)
+        setCurrentIconState(<Volume />)
     }
 
     const handleForward = () => {
         playerRef.current?.seekTo(playerRef.current.getCurrentTime() + 5)
+        setCurrentIconState(<Volume />)
     }
 
     const handleToggleMute = () => {
@@ -75,33 +81,35 @@ const VideoPlayer = ({ width = '640px', height = "390px", videoUrl }) => {
     }, [isFullScreen])
 
     const handleKeyDown = (e) => {
-        if (!playerFocus) {
-            console.log("not focus");
-            return
-        }
+        if (!playerFocus) return
+
+        setShowControls(true)
 
         switch (e.key) {
             case ' ':
+                e.preventDefault()
                 handlePlayAndPause()
                 break;
 
             case 'ArrowUp':
-                if (volume < 1) {
-                    setVolume(prev => prev + 0.1)
-                }
+                e.preventDefault()
+                setCurrentIconState(<Volume />)
+                setVolume(prev => Math.min(prev + 0.1, 1))
                 break;
 
             case 'ArrowDown':
-                if (volume > 0) {
-                    setVolume(prev => prev - 0.1)
-                }
-
+                e.preventDefault()
+                setCurrentIconState(<Volume />)
+                setVolume(prev => Math.max(prev - 0.1, 0))
                 break;
+
             case 'ArrowLeft':
+                e.preventDefault()
                 handleRewind()
                 break;
 
             case 'ArrowRight':
+                e.preventDefault()
                 handleForward()
                 break;
 
@@ -117,6 +125,7 @@ const VideoPlayer = ({ width = '640px', height = "390px", videoUrl }) => {
                 break;
         }
     }
+
 
     const pad = (time) => {
         return ("0" + time).slice(-2)
@@ -148,7 +157,7 @@ const VideoPlayer = ({ width = '640px', height = "390px", videoUrl }) => {
             return () => clearTimeout(timer)
         }
 
-    }, [firstRender, playing])
+    }, [firstRender, playing, muted, volume])
 
     // handle full screen change
     useEffect(() => {
@@ -165,7 +174,7 @@ const VideoPlayer = ({ width = '640px', height = "390px", videoUrl }) => {
         if (showControls) {
             const timer = setTimeout(() => {
                 setShowControls(false)
-            }, 3000);
+            }, 2000);
             return () => clearTimeout(timer)
         }
     }, [showControls])
@@ -205,7 +214,7 @@ const VideoPlayer = ({ width = '640px', height = "390px", videoUrl }) => {
             <AnimatePresence>
                 {
                     showIconTop && (
-                        <motion.div className="absolute top-0 left-0 w-full h-full  bg-gray-800 bg-opacity-40 flex items-center justify-center"
+                        <motion.div className="absolute top-0 left-0 w-full h-full  bg-gray-800 bg-opacity-60 flex items-center justify-center"
                             onClick={handlePlayAndPause}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
@@ -218,7 +227,8 @@ const VideoPlayer = ({ width = '640px', height = "390px", videoUrl }) => {
                                 exit={{ opacity: 0, scale: 0.4 }}
                                 transition={{ duration: .5 }}>
                                 <Button size="icon" className="bg-slate-600">
-                                    {playing ? <Play className="h-8 w-8" /> : <Pause className="h-8 w-8" />}
+                                    {/* {playing ? <Play className="h-8 w-8" /> : <Pause className="h-8 w-8" />} */}
+                                    {currentIconState}
                                 </Button>
                             </motion.div>
                         </motion.div>
