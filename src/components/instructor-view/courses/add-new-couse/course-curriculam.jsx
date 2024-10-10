@@ -4,11 +4,13 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
+import VideoPlayer from "@/components/video-player"
 import { courseCurriculamInitialFormData } from "@/config"
 import { InstructorContext } from "@/context/instructor-context"
 import { uploadMedia } from "@/services"
 import { Cross1Icon } from "@radix-ui/react-icons"
 import { useContext } from "react"
+import ReactPlayer from "react-player"
 
 const CourseCurriculam = () => {
 
@@ -71,6 +73,7 @@ const CourseCurriculam = () => {
         }
     }
 
+    console.log(courseCurriculamFormData);
 
 
     return (
@@ -119,7 +122,19 @@ const CourseCurriculam = () => {
 
                             </div>
                             <div className="mt-5 mb-3">
-                                <Input type="file" accept="video/*" onChange={(e) => handleMediaUpload(e, index)} />
+                                {
+                                    courseCurriculamFormData[index].video_url ? (
+                                        <div className="flex gap-3">
+                                            <VideoPlayer
+                                                videoUrl={courseCurriculamFormData[index].video_url}
+                                            />
+                                            <Button>Replace Video</Button>
+                                            <Button className="bg-red-600">Remove Lecture</Button>
+                                        </div>
+                                    ) : (
+                                        <Input type="file" accept="video/*" onChange={(e) => handleMediaUpload(e, index)} />
+                                    )
+                                }
                             </div>
                         </div>
                     ))}

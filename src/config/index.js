@@ -170,7 +170,7 @@ export const courseLandingInitialFormData = {
 export const courseCurriculamInitialFormData = [
     {
         title: "",
-        video_url: "",
+        video_url: "https://res.cloudinary.com/dkxjcns9a/video/upload/v1728543196/ghuv5qi8hw1nqnl9e52b.mp4",
         free_preview: false,
         public_id: ""
     }
